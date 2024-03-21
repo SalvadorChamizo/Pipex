@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 12:04:38 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/19 13:00:42 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/20 19:19:43 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,19 @@ void	init_here_doc(t_args *args, char **argv, int argc)
 
 void	here_doc_pipex(t_args *args, char **argv, int argc)
 {
-	int	fd;
+	int		fd;
 	char	*buffer;
 
 	init_here_doc(args, argv, argc);
 	fd = open(".heredoc_tmp", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
-	{
-		perror("open");
-		exit(1);
-	}
+		manage_error(args, "open");
 	while (1)
 	{
 		ft_printf("heredoc> ");
 		buffer = get_next_line(STDIN_FILENO);
-		if (!ft_strncmp(args->limiter, buffer, ft_strlen(args->limiter)))
+		if (!ft_strncmp(args->limiter, buffer, ft_strlen(args->limiter))
+			&& ft_strlen(buffer) - 1 == ft_strlen(args->limiter))
 			break ;
 		write(fd, buffer, ft_strlen(buffer));
 		free(buffer);
@@ -64,6 +62,6 @@ void	here_doc_pipex(t_args *args, char **argv, int argc)
 	if (args->fd1 < 0)
 	{
 		unlink(".heredoc_tmp");
-		perror("open");
+		manage_error(args, "open");
 	}
 }
