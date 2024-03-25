@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:22:04 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/21 16:43:04 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:43:22 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_pipex(t_args	*args, char **envp)
 		manage_error(args, "pipe");
 	if (dup2(args->fd1, STDIN_FILENO) == -1)
 		manage_error(args, "dup2");
-	child_process_cmd1(args, pipefd, envp);
+	child_process_cmd(args, pipefd, envp);
 	if (dup2(args->fd2, STDOUT_FILENO) == -1)
 		manage_error(args, "dup2");
 	pid = fork();
@@ -45,6 +45,8 @@ int	main(int argc, char **argv, char **envp)
 	if (argc == 5)
 	{
 		args = malloc(sizeof(t_args));
+		if (!args)
+			manage_error(args, "malloc");
 		init_args(args, argv);
 		*args = check_args(args, envp);
 		open_infile(args);

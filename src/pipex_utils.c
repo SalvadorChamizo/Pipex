@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 19:14:44 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/21 16:49:54 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:43:06 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,17 @@ void	init_args(t_args *args, char **argv)
 	init_valgrind(args);
 	args->file1 = argv[i++];
 	args->command1 = ft_split(argv[i++], ' ');
+	if (!args->command1)
+		manage_error(args, "ft_split");
 	args->cmd1 = ft_strjoin("/", args->command1[0]);
+	if (!args->cmd1)
+		manage_error(args, "ft_strjoin");
 	args->command2 = ft_split(argv[i++], ' ');
+	if (!args->command2)
+		manage_error(args, "ft_split");
 	args->cmd2 = ft_strjoin("/", args->command2[0]);
+	if (!args->cmd2)
+		manage_error(args, "ft_strjoin");
 	args->file2 = argv[i++];
 }
 
@@ -63,7 +71,7 @@ void	open_outfile(t_args *args)
 	}
 }
 
-void	child_process_cmd1(t_args *args, int pipefd[2], char **envp)
+void	child_process_cmd(t_args *args, int pipefd[2], char **envp)
 {
 	pid_t	pid;
 
@@ -81,7 +89,8 @@ void	child_process_cmd1(t_args *args, int pipefd[2], char **envp)
 	else
 	{
 		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
+		if (dup2(pipefd[0], STDIN_FILENO) == -1)
+			manage_error(args, "dup2");
 		waitpid(pid, NULL, 0);
 	}
 }

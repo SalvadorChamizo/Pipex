@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 12:22:04 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/21 17:41:48 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:57:47 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_pipex(t_args	*args, char **envp)
 		manage_error(args, "pipe");
 	if (dup2(args->fd1, STDIN_FILENO) == -1)
 		manage_error(args, "dup2");
-	child_process_cmd1(args, pipefd, envp);
+	child_process_cmd(args, pipefd, envp);
 	if (dup2(args->fd2, STDOUT_FILENO) == -1)
 		manage_error(args, "dup2");
 	pid = fork();
@@ -42,8 +42,11 @@ void	ft_pipex_bns_end(t_args *args, char **envp)
 {
 	pid_t	pid;
 
-	dup2(args->fd2, STDOUT_FILENO);
+	if (dup2(args->fd2, STDOUT_FILENO) == -1)
+		manage_error(args, "dup2");
 	pid = fork();
+	if (pid == -1)
+		manage_error(args, "fork");
 	if (pid == 0)
 	{
 		if (execve(args->cmd_path->content, args->command->cmd, envp) == -1)
@@ -63,7 +66,8 @@ void	ft_pipex_bns(t_args *args, int argc, char **envp)
 	int		i;
 
 	i = 2;
-	dup2(args->fd1, STDIN_FILENO);
+	if (dup2(args->fd1, STDIN_FILENO) == -1)
+		manage_error(args, "dup2");
 	while (i < argc - 2)
 	{
 		child_manage(args, envp);
@@ -107,6 +111,8 @@ int	main(int argc, char **argv, char **envp)
 	if (argc >= 5)
 	{
 		args = malloc(sizeof(t_args));
+		if (!args)
+			return (1);
 		args = start_pipex(args, argv, argc, envp);
 		if (argc == 5)
 			ft_pipex(args, envp);

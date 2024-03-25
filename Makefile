@@ -14,6 +14,7 @@ BNS_FILES = pipex_bns \
 		check_arguments_bns \
 		free_memory_bns \
 		here_doc_funcs \
+		open_fd_bns \
 		pipex_utils_bns \
 
 SRCS_DIR = ./src/
@@ -29,26 +30,26 @@ BNS_OBJS = $(addprefix $(BNS_OBJ_DIR), $(addsuffix .o, $(BNS_FILES)))
 %.o: %.c
 	@$(CC) $(FLAGS) -c $< -o $@
 
+all: $(NAME)
+
 $(NAME): $(LIBFT) $(OBJS)
 	@$(CC) $(FLAGS) $(OBJS) $(LIBFT) -o $(NAME)
 
-$(NAME_BNS): $(LIBFT) $(BNS_OBJS)
+bonus: $(NAME_BNS)
+
+$(NAME_BNS): $(LIBFT) $(BNS_OBJS) $(OBJS)
 	@$(CC) $(FLAGS) $(BNS_OBJS) $(LIBFT) -o $(NAME)
 
 $(LIBFT):
-	make -C $(LIBFT_PATH) all
-
-all: $(NAME)
-
-bonus: $(NAME_BNS)
+	@make -C $(LIBFT_PATH) all
 
 clean: 
-	rm -f $(OBJS) $(BNS_OBJS)
-	make -C $(LIBFT_PATH) clean
+	@rm -f $(OBJS) $(BNS_OBJS)
+	@make -C $(LIBFT_PATH) clean
 
 fclean: clean
-	rm -f $(NAME) $(NAME_BNS)
-	make -C $(LIBFT_PATH) fclean
+	@rm -f $(NAME) $(NAME_BNS)
+	@make -C $(LIBFT_PATH) fclean
 
 re: fclean all
 

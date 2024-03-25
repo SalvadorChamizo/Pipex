@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 19:14:44 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/21 15:59:31 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 19:57:47 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,11 @@ void	child_manage(t_args *args, char **envp)
 	pid_t	pid;
 	int		pipefd[2];
 
-	pipe(pipefd);
+	if (pipe(pipefd) == -1)
+		manage_error(args, "pipe");
 	pid = fork();
+	if (pid == -1)
+		manage_error(args, "fork");
 	if (pid == 0)
 	{
 		if (dup2(pipefd[1], STDOUT_FILENO) == -1)
@@ -30,12 +33,13 @@ void	child_manage(t_args *args, char **envp)
 	else
 	{
 		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
+		if (dup2(pipefd[0], STDIN_FILENO) == -1)
+			manage_error(args, "dup2");
 		waitpid(pid, NULL, 0);
 	}
 }
 
-void	child_process_cmd1(t_args *args, int pipefd[2], char **envp)
+void	child_process_cmd(t_args *args, int pipefd[2], char **envp)
 {
 	pid_t	pid;
 
@@ -53,8 +57,11 @@ void	child_process_cmd1(t_args *args, int pipefd[2], char **envp)
 	else
 	{
 		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
+		if (dup2(pipefd[0], STDIN_FILENO) == -1)
+			manage_error(args, "dup2");
 		waitpid(pid, NULL, 0);
+		args->cmd_path = args->cmd_path->next;
+		args->command = args->command->next;
 	}
 }
 

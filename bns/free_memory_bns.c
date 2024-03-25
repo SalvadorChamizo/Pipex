@@ -6,7 +6,7 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/14 18:13:02 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/21 18:00:18 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:41:56 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	ft_list_clear(t_list **args)
 	while (*args)
 	{
 		temp = (*args)->next;
+		free((*args)->content);
 		free(*args);
 		*args = temp;
 	}
@@ -69,7 +70,7 @@ void	*free_args(t_args *args)
 
 	ft_list_clear(&args->cmd);
 	if (args->cmd_path)
-		free_path(args);
+		ft_list_clear(&args->cmd_path);
 	while (args->command)
 	{
 		i = 0;

@@ -6,11 +6,29 @@
 /*   By: schamizo <schamizo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 12:04:38 by schamizo          #+#    #+#             */
-/*   Updated: 2024/03/20 19:19:43 by schamizo         ###   ########.fr       */
+/*   Updated: 2024/03/25 13:03:22 by schamizo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex_bns.h"
+
+void	init_all_valgrind(t_args *args)
+{
+	args->cmd = NULL;
+	args->cmd_path = NULL;
+	args->command = NULL;
+	args->first_cmd = NULL;
+	args->first_path = NULL;
+	args->first_command = NULL;
+	args->file1 = NULL;
+	args->file2 = NULL;
+	args->limiter = NULL;
+	args->cmd_nbr = 0;
+	args->index = 0;
+	args->fd1 = 0;
+	args->fd2 = 0;
+	args->heredoc_flag = 0;
+}
 
 void	init_here_doc(t_args *args, char **argv, int argc)
 {
@@ -22,6 +40,8 @@ void	init_here_doc(t_args *args, char **argv, int argc)
 	i = 2;
 	temp = NULL;
 	first = NULL;
+	init_all_valgrind(args);
+	args->heredoc_flag = 1;
 	args->file1 = ".heredoc_tmp";
 	args->limiter = argv[i++];
 	while (i < argc - 1)
